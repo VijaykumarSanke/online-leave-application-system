@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Register – College Leave System{% endblock %}
+
+{% block auth_content %}
+<div class="auth-bg">
+  <div class="auth-card" style="max-width: 520px;">
+    <div class="auth-header">
+      <div class="auth-logo">
+        <i class="bi bi-person-plus-fill"></i>
+      </div>
+      <h2 class="auth-title">Create Account</h2>
+      <p class="auth-subtitle">Register as student or faculty</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('register') }}" novalidate>
+      <div class="row g-3">
+
+        <div class="col-12">
+          <label class="form-label">Full Name</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+            <input type="text" class="form-control" name="full_name"
+                   placeholder="Enter your full name" required />
+          </div>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Email Address</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+            <input type="email" class="form-control" name="email"
+                   placeholder="Enter your email" required />
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Role</label>
+          <select class="form-select" name="role" required id="roleSelect">
+            <option value="">-- Select Role --</option>
+            <option value="student">Student</option>
+            <option value="faculty">Faculty</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Department</label>
+          <select class="form-select" name="department" required>
+            <option value="">-- Select Dept --</option>
+            <option>Computer Science</option>
+            <option>Information Technology</option>
+            <option>Electronics</option>
+            <option>Mechanical Engineering</option>
+            <option>Civil Engineering</option>
+          </select>
+        </div>
+
+        <div class="col-12" id="rollNoField">
+          <label class="form-label">Roll Number <span class="text-muted">(Students only)</span></label>
+          <input type="text" class="form-control" name="roll_no" placeholder="e.g. CS2021001" />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" name="password"
+                 placeholder="Min 6 characters" required />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Confirm Password</label>
+          <input type="password" class="form-control" name="confirm_password"
+                 placeholder="Repeat password" required />
+        </div>
+
+        <div class="col-12 mt-2">
+          <button type="submit" class="btn btn-success w-100">
+            <i class="bi bi-person-check-fill me-2"></i>Register
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <div class="auth-footer">
+      <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Show/hide roll number field based on role
+  document.getElementById('roleSelect').addEventListener('change', function () {
+    const rollField = document.getElementById('rollNoField');
+    rollField.style.display = this.value === 'student' ? 'block' : 'none';
+  });
+  document.getElementById('rollNoField').style.display = 'none';
+</script>
+{% endblock %}

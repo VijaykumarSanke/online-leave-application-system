@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Add User{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h4 class="page-title"><i class="bi bi-person-plus-fill me-2 text-danger"></i>Add New User</h4>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-body p-4">
+        <form method="POST" action="{{ url_for('admin_add_user') }}" novalidate>
+          <div class="row g-3">
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="full_name" placeholder="Enter full name" required />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+              <input type="email" class="form-control" name="email" placeholder="Enter email" required />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Role <span class="text-danger">*</span></label>
+              <select class="form-select" name="role" id="roleSelect" required>
+                <option value="">-- Select Role --</option>
+                <option value="student">Student</option>
+                <option value="faculty">Faculty</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Department <span class="text-danger">*</span></label>
+              <select class="form-select" name="department" required>
+                <option value="">-- Select Department --</option>
+                <option>Computer Science</option>
+                <option>Information Technology</option>
+                <option>Electronics</option>
+                <option>Mechanical Engineering</option>
+                <option>Civil Engineering</option>
+                <option>Administration</option>
+              </select>
+            </div>
+
+            <div class="col-md-6" id="rollNoField" style="display:none;">
+              <label class="form-label fw-semibold">Roll Number</label>
+              <input type="text" class="form-control" name="roll_no" placeholder="e.g. CS2021001" />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Password <span class="text-danger">*</span></label>
+              <input type="password" class="form-control" name="password"
+                     placeholder="Min 6 characters" required />
+            </div>
+
+            <div class="col-12 mt-2">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-person-check-fill me-2"></i>Add User
+              </button>
+              <a href="{{ url_for('admin_users') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('roleSelect').addEventListener('change', function () {
+    document.getElementById('rollNoField').style.display =
+      this.value === 'student' ? 'block' : 'none';
+  });
+</script>
+{% endblock %}

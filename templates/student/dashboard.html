@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h4 class="page-title">
+    <i class="bi bi-grid-fill me-2 text-primary"></i>My Dashboard
+  </h4>
+  <p class="text-muted mb-0">Welcome back, {{ session.full_name }}!</p>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-4 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="stat-card stat-blue">
+      <div class="stat-icon"><i class="bi bi-file-earmark-text-fill"></i></div>
+      <div class="stat-value">{{ total }}</div>
+      <div class="stat-label">Total Applied</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card stat-yellow">
+      <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+      <div class="stat-value">{{ pending }}</div>
+      <div class="stat-label">Pending</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card stat-green">
+      <div class="stat-icon"><i class="bi bi-check-circle-fill"></i></div>
+      <div class="stat-value">{{ approved }}</div>
+      <div class="stat-label">Approved</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card stat-red">
+      <div class="stat-icon"><i class="bi bi-x-circle-fill"></i></div>
+      <div class="stat-value">{{ rejected }}</div>
+      <div class="stat-label">Rejected</div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Action -->
+<div class="mb-4">
+  <a href="{{ url_for('student_apply') }}" class="btn btn-primary">
+    <i class="bi bi-file-earmark-plus-fill me-2"></i>Apply for Leave
+  </a>
+  <a href="{{ url_for('student_my_leaves') }}" class="btn btn-outline-secondary ms-2">
+    <i class="bi bi-list-check me-2"></i>View All Leaves
+  </a>
+</div>
+
+<!-- Recent Applications -->
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h6 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Leave Applications</h6>
+    <a href="{{ url_for('student_my_leaves') }}" class="btn btn-sm btn-outline-primary">View All</a>
+  </div>
+  <div class="card-body p-0">
+    {% if recent %}
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for leave in recent %}
+          <tr>
+            <td>{{ leave.title }}</td>
+            <td>{{ leave.leave_type | replace('_', ' ') | title }}</td>
+            <td>{{ leave.from_date }}</td>
+            <td>{{ leave.to_date }}</td>
+            <td>
+              <span class="badge
+                {% if leave.status == 'approved' %}bg-success
+                {% elif leave.status == 'rejected' %}bg-danger
+                {% else %}bg-warning text-dark{% endif %}">
+                {{ leave.status | capitalize }}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <i class="bi bi-inbox"></i>
+      <p>No leave applications yet.</p>
+      <a href="{{ url_for('student_apply') }}" class="btn btn-primary btn-sm">Apply Now</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

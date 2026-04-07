@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Review Leave Request{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h4 class="page-title">
+    <i class="bi bi-file-earmark-check-fill me-2 text-warning"></i>Review Leave Request
+  </h4>
+</div>
+
+<div class="row">
+  <!-- Leave Details -->
+  <div class="col-lg-7 mb-4">
+    <div class="card h-100">
+      <div class="card-header">
+        <h6 class="mb-0">Leave Application Details</h6>
+      </div>
+      <div class="card-body">
+        <table class="table table-borderless">
+          <tr><th width="35%">Student Name</th><td>{{ leave.full_name }}</td></tr>
+          <tr><th>Roll Number</th><td>{{ leave.roll_no or '—' }}</td></tr>
+          <tr><th>Department</th><td>{{ leave.department or '—' }}</td></tr>
+          <tr><th>Email</th><td>{{ leave.email }}</td></tr>
+          <tr><th>Leave Title</th><td>{{ leave.title }}</td></tr>
+          <tr>
+            <th>Leave Type</th>
+            <td>
+              <span class="badge bg-light text-dark border">
+                {{ leave.leave_type | replace('_', ' ') | title }}
+              </span>
+            </td>
+          </tr>
+          <tr><th>From Date</th><td>{{ leave.from_date }}</td></tr>
+          <tr><th>To Date</th><td>{{ leave.to_date }}</td></tr>
+          <tr>
+            <th>Current Status</th>
+            <td>
+              <span class="badge
+                {% if leave.status == 'approved' %}bg-success
+                {% elif leave.status == 'rejected' %}bg-danger
+                {% else %}bg-warning text-dark{% endif %}">
+                {{ leave.status | capitalize }}
+              </span>
+            </td>
+          </tr>
+          <tr><th>Applied On</th><td>{{ leave.applied_at.strftime('%d %b %Y, %I:%M %p') if leave.applied_at else '—' }}</td></tr>
+        </table>
+
+        <div class="mt-2">
+          <strong>Reason:</strong>
+          <p class="mt-1 p-3 bg-light rounded">{{ leave.reason }}</p>
+        </div>
+
+        {% if leave.faculty_remarks %}
+        <div class="mt-2">
+          <strong>Previous Remarks:</strong>
+          <p class="mt-1 p-3 bg-light rounded text-muted">{{ leave.faculty_remarks }}</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Panel -->
+  <div class="col-lg-5 mb-4">
+    <div class="card">
+      <div class="card-header">
+        <h6 class="mb-0">Take Action</h6>
+      </div>
+      <div class="card-body">
+        {% if leave.status == 'pending' %}
+        <form method="POST" action="{{ url_for('faculty_review', leave_id=leave.id) }}">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Remarks / Comments</label>
+            <textarea class="form-control" name="remarks" rows="4"
+                      placeholder="Add optional remarks, reason for approval/rejection..."></textarea>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" name="action" value="approve"
+                    class="btn btn-success"
+                    onclick="return confirm('Approve this leave request?')">
+              <i class="bi bi-check-circle-fill me-2"></i>Approve Leave
+            </button>
+            <button type="submit" name="action" value="reject"
+                    class="btn btn-danger"
+                    onclick="return confirm('Reject this leave request?')">
+              <i class="bi bi-x-circle-fill me-2"></i>Reject Leave
+            </button>
+          </div>
+        </form>
+        {% else %}
+        <div class="alert
+          {% if leave.status == 'approved' %}alert-success{% else %}alert-danger{% endif %}">
+          <i class="bi
+            {% if leave.status == 'approved' %}bi-check-circle-fill{% else %}bi-x-circle-fill{% endif %} me-2"></i>
+          This leave has already been <strong>{{ leave.status }}</strong>.
+        </div>
+        {% endif %}
+
+        <a href="{{ url_for('faculty_requests') }}" class="btn btn-outline-secondary w-100 mt-3">
+          <i class="bi bi-arrow-left me-2"></i>Back to Requests
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

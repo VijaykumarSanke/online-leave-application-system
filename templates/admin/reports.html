@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h4 class="page-title"><i class="bi bi-bar-chart-fill me-2 text-danger"></i>System Reports</h4>
+  <p class="text-muted mb-0">Summary statistics for the leave management system.</p>
+</div>
+
+<div class="row g-4">
+
+  <!-- Department-wise Leaves -->
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-header">
+        <h6 class="mb-0"><i class="bi bi-building me-2"></i>Leaves by Department</h6>
+      </div>
+      <div class="card-body">
+        {% if dept_stats %}
+          {% for row in dept_stats %}
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="fw-semibold">{{ row.department or 'Unknown' }}</span>
+              <span class="badge bg-primary">{{ row.cnt }}</span>
+            </div>
+            {% set max_cnt = dept_stats | map(attribute='cnt') | max %}
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-primary"
+                   style="width: {{ (row.cnt / max_cnt * 100) | round }}%"></div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-muted text-center py-3">No data available.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Leave Type Breakdown -->
+  <div class="col-lg-6">
+    <div class="card h-100">
+      <div class="card-header">
+        <h6 class="mb-0"><i class="bi bi-pie-chart-fill me-2"></i>Leaves by Type</h6>
+      </div>
+      <div class="card-body">
+        {% set type_colors = {'sick_leave': 'danger', 'personal_leave': 'primary', 'emergency': 'warning', 'others': 'secondary'} %}
+        {% if type_stats %}
+          {% for row in type_stats %}
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="fw-semibold">{{ row.leave_type | replace('_', ' ') | title }}</span>
+              <span class="badge bg-{{ type_colors.get(row.leave_type, 'secondary') }}">{{ row.cnt }}</span>
+            </div>
+            {% set max_cnt = type_stats | map(attribute='cnt') | max %}
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-{{ type_colors.get(row.leave_type, 'secondary') }}"
+                   style="width: {{ (row.cnt / max_cnt * 100) | round }}%"></div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-muted text-center py-3">No data available.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Monthly Applications -->
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h6 class="mb-0"><i class="bi bi-calendar-month me-2"></i>Monthly Leave Applications (Current Year)</h6>
+      </div>
+      <div class="card-body">
+        {% set months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] %}
+        {% if monthly %}
+        <div class="row g-2">
+          {% set max_m = monthly | map(attribute='cnt') | max %}
+          {% for row in monthly %}
+          <div class="col text-center">
+            <div class="monthly-bar-wrap">
+              <div class="monthly-bar"
+                   style="height: {{ (row.cnt / max_m * 80) | round }}px; background: var(--primary-color);">
+              </div>
+              <div class="monthly-count">{{ row.cnt }}</div>
+              <div class="monthly-label">{{ months[row.month - 1] }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+          <p class="text-muted text-center py-3">No monthly data available yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

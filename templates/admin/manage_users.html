@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Manage Users{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
+  <div>
+    <h4 class="page-title"><i class="bi bi-people-fill me-2 text-danger"></i>Manage Users</h4>
+    <p class="text-muted mb-0">Add, edit, or remove users from the system.</p>
+  </div>
+  <a href="{{ url_for('admin_add_user') }}" class="btn btn-primary">
+    <i class="bi bi-person-plus-fill me-2"></i>Add User
+  </a>
+</div>
+
+<!-- Filter -->
+<div class="card mb-4">
+  <div class="card-body py-3">
+    <form method="GET" class="row g-2 align-items-end">
+      <div class="col-sm-5">
+        <input type="text" class="form-control" name="search"
+               value="{{ search }}" placeholder="Search by name or email..." />
+      </div>
+      <div class="col-sm-4">
+        <select class="form-select" name="role">
+          <option value="">All Roles</option>
+          <option value="student" {% if role_filter == 'student' %}selected{% endif %}>Student</option>
+          <option value="faculty" {% if role_filter == 'faculty' %}selected{% endif %}>Faculty</option>
+          <option value="admin"   {% if role_filter == 'admin'   %}selected{% endif %}>Admin</option>
+        </select>
+      </div>
+      <div class="col-sm-3">
+        <button class="btn btn-primary w-100" type="submit">
+          <i class="bi bi-search me-1"></i>Search
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    {% if users %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Department</th>
+            <th>Roll No</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <div class="mini-avatar
+                  {% if user.role == 'admin' %}bg-danger
+                  {% elif user.role == 'faculty' %}bg-warning
+                  {% else %}bg-primary{% endif %}">
+                  {{ user.full_name[0] | upper }}
+                </div>
+                {{ user.full_name }}
+              </div>
+            </td>
+            <td>{{ user.email }}</td>
+            <td>
+              <span class="badge
+                {% if user.role == 'admin' %}bg-danger
+                {% elif user.role == 'faculty' %}bg-warning text-dark
+                {% else %}bg-primary{% endif %}">
+                {{ user.role | capitalize }}
+              </span>
+            </td>
+            <td>{{ user.department or '—' }}</td>
+            <td>{{ user.roll_no or '—' }}</td>
+            <td>
+              <span class="badge {% if user.status == 'active' %}bg-success{% else %}bg-secondary{% endif %}">
+                {{ user.status | capitalize }}
+              </span>
+            </td>
+            <td>
+              <a href="{{ url_for('admin_edit_user', user_id=user.id) }}"
+                 class="btn btn-sm btn-outline-primary me-1">
+                <i class="bi bi-pencil-fill"></i>
+              </a>
+
+              <form method="POST"
+                    action="{{ url_for('admin_toggle_user', user_id=user.id) }}"
+                    class="d-inline">
+                <button type="submit"
+                        class="btn btn-sm {% if user.status == 'active' %}btn-outline-warning{% else %}btn-outline-success{% endif %} me-1"
+                        title="{% if user.status == 'active' %}Deactivate{% else %}Activate{% endif %}">
+                  <i class="bi {% if user.status == 'active' %}bi-pause-fill{% else %}bi-play-fill{% endif %}"></i>
+                </button>
+              </form>
+
+              {% if user.id != session.user_id %}
+              <form method="POST"
+                    action="{{ url_for('admin_delete_user', user_id=user.id) }}"
+                    class="d-inline"
+                    onsubmit="return confirm('Delete this user? This cannot be undone.')">
+                <button type="submit" class="btn btn-sm btn-outline-danger">
+                  <i class="bi bi-trash-fill"></i>
+                </button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <i class="bi bi-people"></i>
+      <p>No users found.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

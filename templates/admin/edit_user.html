@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Edit User{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h4 class="page-title"><i class="bi bi-pencil-square me-2 text-danger"></i>Edit User</h4>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-body p-4">
+        <form method="POST" action="{{ url_for('admin_edit_user', user_id=user.id) }}" novalidate>
+          <div class="row g-3">
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="full_name"
+                     value="{{ user.full_name }}" required />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Email</label>
+              <input type="email" class="form-control" value="{{ user.email }}" disabled />
+              <small class="text-muted">Email cannot be changed.</small>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Role</label>
+              <input type="text" class="form-control"
+                     value="{{ user.role | capitalize }}" disabled />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Department <span class="text-danger">*</span></label>
+              <select class="form-select" name="department" required>
+                {% for dept in ['Computer Science','Information Technology','Electronics','Mechanical Engineering','Civil Engineering','Administration'] %}
+                <option {% if user.department == dept %}selected{% endif %}>{{ dept }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            {% if user.role == 'student' %}
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Roll Number</label>
+              <input type="text" class="form-control" name="roll_no"
+                     value="{{ user.roll_no or '' }}" />
+            </div>
+            {% endif %}
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Status</label>
+              <select class="form-select" name="status">
+                <option value="active"   {% if user.status == 'active' %}selected{% endif %}>Active</option>
+                <option value="inactive" {% if user.status == 'inactive' %}selected{% endif %}>Inactive</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">New Password</label>
+              <input type="password" class="form-control" name="password"
+                     placeholder="Leave blank to keep current password" />
+            </div>
+
+            <div class="col-12 mt-2">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save-fill me-2"></i>Save Changes
+              </button>
+              <a href="{{ url_for('admin_users') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
