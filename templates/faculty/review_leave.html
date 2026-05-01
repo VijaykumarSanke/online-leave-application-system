@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Review Leave Request{% endblock %}
+{% block title %}{% if reviewer_role == 'hod' %}HOD{% else %}Faculty{% endif %} Review{% endblock %}
 
 {% block content %}
 <div class="page-header">
   <h4 class="page-title">
-    <i class="bi bi-file-earmark-check-fill me-2 text-warning"></i>Review Leave Request
+    <i class="bi bi-file-earmark-check-fill me-2 text-warning"></i>{% if reviewer_role == 'hod' %}HOD{% else %}Faculty{% endif %} Review
   </h4>
 </div>
 
@@ -36,10 +36,8 @@
             <th>Current Status</th>
             <td>
               <span class="badge
-                {% if leave.status == 'approved' %}bg-success
-                {% elif leave.status == 'rejected' %}bg-danger
-                {% else %}bg-warning text-dark{% endif %}">
-                {{ leave.status | capitalize }}
+                {{ status_badges.get(leave.status, 'bg-secondary') }}">
+                {{ status_labels.get(leave.status, leave.status | replace('_', ' ') | title) }}
               </span>
             </td>
           </tr>
@@ -51,9 +49,16 @@
           <p class="mt-1 p-3 bg-light rounded">{{ leave.reason }}</p>
         </div>
 
+        {% if leave.hod_remarks %}
+        <div class="mt-2">
+          <strong>HOD Remarks:</strong>
+          <p class="mt-1 p-3 bg-light rounded text-muted">{{ leave.hod_remarks }}</p>
+        </div>
+        {% endif %}
+
         {% if leave.faculty_remarks %}
         <div class="mt-2">
-          <strong>Previous Remarks:</strong>
+          <strong>Faculty Remarks:</strong>
           <p class="mt-1 p-3 bg-light rounded text-muted">{{ leave.faculty_remarks }}</p>
         </div>
         {% endif %}
@@ -68,33 +73,36 @@
         <h6 class="mb-0">Take Action</h6>
       </div>
       <div class="card-body">
-        {% if leave.status == 'pending' %}
+        {% set can_review = (reviewer_role == 'hod' and leave.status == 'pending') or (reviewer_role == 'faculty' and leave.status == 'hod_approved') %}
+        {% if can_review %}
         <form method="POST" action="{{ url_for('faculty_review', leave_id=leave.id) }}">
           <div class="mb-3">
             <label class="form-label fw-semibold">Remarks / Comments</label>
             <textarea class="form-control" name="remarks" rows="4"
-                      placeholder="Add optional remarks, reason for approval/rejection..."></textarea>
+                      placeholder="Add optional remarks..."></textarea>
           </div>
 
           <div class="d-grid gap-2">
             <button type="submit" name="action" value="approve"
                     class="btn btn-success"
                     onclick="return confirm('Approve this leave request?')">
-              <i class="bi bi-check-circle-fill me-2"></i>Approve Leave
+              <i class="bi bi-check-circle-fill me-2"></i>{% if reviewer_role == 'hod' %}Approve and Send to Faculty{% else %}Approve Leave{% endif %}
             </button>
+            {% if reviewer_role == 'hod' %}
             <button type="submit" name="action" value="reject"
                     class="btn btn-danger"
                     onclick="return confirm('Reject this leave request?')">
               <i class="bi bi-x-circle-fill me-2"></i>Reject Leave
             </button>
+            {% endif %}
           </div>
         </form>
         {% else %}
         <div class="alert
-          {% if leave.status == 'approved' %}alert-success{% else %}alert-danger{% endif %}">
+          {% if leave.status == 'approved' %}alert-success{% elif leave.status == 'rejected' %}alert-danger{% else %}alert-info{% endif %}">
           <i class="bi
-            {% if leave.status == 'approved' %}bi-check-circle-fill{% else %}bi-x-circle-fill{% endif %} me-2"></i>
-          This leave has already been <strong>{{ leave.status }}</strong>.
+            {% if leave.status == 'approved' %}bi-check-circle-fill{% elif leave.status == 'rejected' %}bi-x-circle-fill{% else %}bi-info-circle-fill{% endif %} me-2"></i>
+          Current status: <strong>{{ status_labels.get(leave.status, leave.status | replace('_', ' ') | title) }}</strong>.
         </div>
         {% endif %}
 

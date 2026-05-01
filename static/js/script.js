@@ -1,75 +1,83 @@
-/* ============================================================
-   Online Leave Application System — Custom JS
-   ============================================================ */
+/*
+  Shared UI interactions for LeavePortal.
+*/
 
 document.addEventListener('DOMContentLoaded', function () {
+  const html = document.documentElement;
+  const themeToggles = document.querySelectorAll('#themeToggle');
 
-  // ── Sidebar Toggle (Mobile) ──────────────────────────────
-  const sidebar        = document.getElementById('sidebar');
-  const sidebarToggle  = document.getElementById('sidebarToggle');
+  themeToggles.forEach((themeToggle) => {
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
 
-  // Create overlay element for mobile
-  const overlay = document.createElement('div');
-  overlay.classList.add('sidebar-overlay');
-  document.body.appendChild(overlay);
-
-  if (sidebarToggle) {
-    sidebarToggle.addEventListener('click', function () {
-      sidebar.classList.toggle('open');
-      overlay.classList.toggle('show');
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      themeToggle.setAttribute('aria-label', `Switch to ${currentTheme} theme`);
     });
-  }
-
-  overlay.addEventListener('click', function () {
-    sidebar.classList.remove('open');
-    overlay.classList.remove('show');
   });
 
-  // ── Password Toggle (Login Page) ────────────────────────
-  const togglePwBtn  = document.getElementById('togglePw');
-  const toggleIcon   = document.getElementById('toggleIcon');
-  const passwordInput = document.getElementById('password');
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  const sidebar = document.getElementById('sidebar');
 
-  if (togglePwBtn && passwordInput) {
-    togglePwBtn.addEventListener('click', function () {
-      const isPassword = passwordInput.type === 'password';
-      passwordInput.type = isPassword ? 'text' : 'password';
-      toggleIcon.classList.toggle('bi-eye-fill', !isPassword);
-      toggleIcon.classList.toggle('bi-eye-slash-fill', isPassword);
+  if (sidebarToggle && sidebar) {
+    sidebarToggle.addEventListener('click', () => {
+      const isOpen = sidebar.classList.toggle('open');
+      sidebarToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.addEventListener('click', (event) => {
+      const clickedInsideSidebar = sidebar.contains(event.target);
+      const clickedToggle = sidebarToggle.contains(event.target);
+
+      if (!clickedInsideSidebar && !clickedToggle && sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        sidebarToggle.setAttribute('aria-expanded', 'false');
+      }
     });
   }
 
-  // ── Auto-dismiss flash alerts after 4 seconds ───────────
+  const togglePw = document.getElementById('togglePw');
+
+  if (togglePw) {
+    togglePw.addEventListener('click', function () {
+      const pwField = document.getElementById('password');
+      const icon = this.querySelector('i');
+      const isHidden = pwField.type === 'password';
+
+      pwField.type = isHidden ? 'text' : 'password';
+      icon.classList.toggle('bi-eye-fill', !isHidden);
+      icon.classList.toggle('bi-eye-slash-fill', isHidden);
+      this.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+    });
+  }
+
   const alerts = document.querySelectorAll('.alert.alert-dismissible');
-  alerts.forEach(function (alert) {
-    setTimeout(function () {
+  alerts.forEach((alert) => {
+    setTimeout(() => {
       const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
       if (bsAlert) bsAlert.close();
-    }, 4000);
+    }, 4500);
   });
 
-  // ── Date Validation: to_date >= from_date ───────────────
   const fromDate = document.getElementById('fromDate');
-  const toDate   = document.getElementById('toDate');
+  const toDate = document.getElementById('toDate');
 
   if (fromDate && toDate) {
-    // Set today as the minimum for from_date
     const today = new Date().toISOString().split('T')[0];
     fromDate.min = today;
 
     fromDate.addEventListener('change', function () {
       toDate.min = this.value;
-      // Reset to_date if it's now before from_date
       if (toDate.value && toDate.value < this.value) {
         toDate.value = this.value;
       }
     });
   }
 
-  // ── Client-side Form Validation ─────────────────────────
   const forms = document.querySelectorAll('form[novalidate]');
-  forms.forEach(function (form) {
-    form.addEventListener('submit', function (event) {
+  forms.forEach((form) => {
+    form.addEventListener('submit', (event) => {
       if (!form.checkValidity()) {
         event.preventDefault();
         event.stopPropagation();
@@ -78,10 +86,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // ── Tooltips (Bootstrap) ────────────────────────────────
   const tooltipEls = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-  tooltipEls.forEach(function (el) {
+  tooltipEls.forEach((el) => {
     new bootstrap.Tooltip(el);
   });
-
 });

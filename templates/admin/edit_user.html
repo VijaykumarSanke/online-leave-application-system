@@ -28,7 +28,7 @@
             <div class="col-md-6">
               <label class="form-label fw-semibold">Role</label>
               <input type="text" class="form-control"
-                     value="{{ user.role | capitalize }}" disabled />
+                     value="{% if user.role == 'hod' %}HOD{% else %}{{ user.role | capitalize }}{% endif %}" disabled />
             </div>
 
             <div class="col-md-6">

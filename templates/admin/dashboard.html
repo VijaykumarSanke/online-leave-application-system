@@ -110,10 +110,8 @@
             <td>{{ leave.applied_at.strftime('%d %b %Y') if leave.applied_at else '—' }}</td>
             <td>
               <span class="badge
-                {% if leave.status == 'approved' %}bg-success
-                {% elif leave.status == 'rejected' %}bg-danger
-                {% else %}bg-warning text-dark{% endif %}">
-                {{ leave.status | capitalize }}
+                {{ status_badges.get(leave.status, 'bg-secondary') }}">
+                {{ status_labels.get(leave.status, leave.status | replace('_', ' ') | title) }}
               </span>
             </td>
           </tr>

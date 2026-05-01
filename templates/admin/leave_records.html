@@ -17,7 +17,8 @@
       <div class="col-sm-4">
         <select class="form-select" name="status">
           <option value="">All Status</option>
-          <option value="pending"  {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+          <option value="pending"  {% if status_filter == 'pending' %}selected{% endif %}>Pending HOD</option>
+          <option value="hod_approved"  {% if status_filter == 'hod_approved' %}selected{% endif %}>Pending Faculty</option>
           <option value="approved" {% if status_filter == 'approved' %}selected{% endif %}>Approved</option>
           <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Rejected</option>
         </select>
@@ -66,15 +67,14 @@
             <td>{{ leave.applied_at.strftime('%d %b %Y') if leave.applied_at else '—' }}</td>
             <td>
               <span class="badge
-                {% if leave.status == 'approved' %}bg-success
-                {% elif leave.status == 'rejected' %}bg-danger
-                {% else %}bg-warning text-dark{% endif %}">
-                {{ leave.status | capitalize }}
+                {{ status_badges.get(leave.status, 'bg-secondary') }}">
+                {{ status_labels.get(leave.status, leave.status | replace('_', ' ') | title) }}
               </span>
             </td>
             <td>
               <small class="text-muted">
-                {{ leave.faculty_remarks[:30] ~ '...' if leave.faculty_remarks and leave.faculty_remarks|length > 30 else leave.faculty_remarks or '—' }}
+                {% set remarks = leave.faculty_remarks or leave.hod_remarks %}
+                {{ remarks[:30] ~ '...' if remarks and remarks|length > 30 else remarks or '—' }}
               </small>
             </td>
           </tr>

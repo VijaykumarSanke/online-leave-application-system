@@ -24,6 +24,7 @@
         <select class="form-select" name="role">
           <option value="">All Roles</option>
           <option value="student" {% if role_filter == 'student' %}selected{% endif %}>Student</option>
+          <option value="hod"     {% if role_filter == 'hod'     %}selected{% endif %}>HOD</option>
           <option value="faculty" {% if role_filter == 'faculty' %}selected{% endif %}>Faculty</option>
           <option value="admin"   {% if role_filter == 'admin'   %}selected{% endif %}>Admin</option>
         </select>
@@ -63,6 +64,7 @@
                 <div class="mini-avatar
                   {% if user.role == 'admin' %}bg-danger
                   {% elif user.role == 'faculty' %}bg-warning
+                  {% elif user.role == 'hod' %}bg-info
                   {% else %}bg-primary{% endif %}">
                   {{ user.full_name[0] | upper }}
                 </div>
@@ -74,8 +76,9 @@
               <span class="badge
                 {% if user.role == 'admin' %}bg-danger
                 {% elif user.role == 'faculty' %}bg-warning text-dark
+                {% elif user.role == 'hod' %}bg-info text-dark
                 {% else %}bg-primary{% endif %}">
-                {{ user.role | capitalize }}
+                {% if user.role == 'hod' %}HOD{% else %}{{ user.role | capitalize }}{% endif %}
               </span>
             </td>
             <td>{{ user.department or '—' }}</td>

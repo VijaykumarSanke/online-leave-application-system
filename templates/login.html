@@ -1,58 +1,48 @@
 {% extends "base.html" %}
 
-{% block title %}Login – College Leave System{% endblock %}
+{% block title %}Login - LeavePortal{% endblock %}
 
 {% block auth_content %}
 <div class="auth-bg">
-  <div class="auth-card">
+  <a href="{{ url_for('index') }}" class="auth-back">
+    <i class="bi bi-arrow-left"></i>
+    Back
+  </a>
+
+  <div class="auth-card login-card">
     <div class="auth-header">
       <div class="auth-logo">
         <i class="bi bi-mortarboard-fill"></i>
       </div>
-      <h2 class="auth-title">College Leave Portal</h2>
-      <p class="auth-subtitle">Sign in to your account</p>
+      <h2 class="auth-title">Sign in to LeavePortal</h2>
     </div>
 
-    <form method="POST" action="{{ url_for('login') }}" novalidate>
-      <div class="mb-3">
-        <label for="email" class="form-label">Email Address</label>
-        <div class="input-group">
-          <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
-          <input type="email" class="form-control" id="email" name="email"
-                 placeholder="Enter your email" required autofocus />
+    <form method="POST" action="{{ url_for('login') }}">
+      <div class="mb-4">
+        <label for="email" class="form-label fw-bold">Email address</label>
+        <div class="input-group login-input overflow-hidden px-2">
+          <span class="input-group-text border-0"><i class="bi bi-envelope text-muted"></i></span>
+          <input type="email" class="form-control border-0 shadow-none py-3" id="email" name="email"
+                 placeholder="name@college.com" required autofocus />
         </div>
       </div>
 
       <div class="mb-4">
-        <label for="password" class="form-label">Password</label>
-        <div class="input-group">
-          <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-          <input type="password" class="form-control" id="password" name="password"
+        <label for="password" class="form-label fw-bold">Password</label>
+        <div class="input-group login-input overflow-hidden px-2">
+          <span class="input-group-text border-0"><i class="bi bi-lock text-muted"></i></span>
+          <input type="password" class="form-control border-0 shadow-none py-3" id="password" name="password"
                  placeholder="Enter your password" required />
-          <button class="btn btn-outline-secondary" type="button" id="togglePw">
-            <i class="bi bi-eye-fill" id="toggleIcon"></i>
+          <button class="btn border-0 text-muted" type="button" id="togglePw" aria-label="Show password">
+            <i class="bi bi-eye-fill"></i>
           </button>
         </div>
       </div>
 
-      <button type="submit" class="btn btn-primary w-100 btn-login">
-        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+      <button type="submit" class="btn btn-primary w-100 py-3 login-submit">
+        Sign In
       </button>
     </form>
-
-    <div class="auth-footer">
-      <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
-    </div>
-
-    <!-- Demo credentials hint -->
-    <div class="demo-hint">
-      <small class="text-muted">
-        <i class="bi bi-info-circle me-1"></i>
-        <strong>Demo:</strong>
-        admin@college.com / Admin@123 &nbsp;|&nbsp;
-        student1@college.com / Student@123
-      </small>
-    </div>
   </div>
 </div>
 {% endblock %}

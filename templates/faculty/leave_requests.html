@@ -1,9 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Leave Requests{% endblock %}
+{% block title %}{% if reviewer_role == 'hod' %}HOD{% else %}Faculty{% endif %} Leave Requests{% endblock %}
 
 {% block content %}
 <div class="page-header">
-  <h4 class="page-title"><i class="bi bi-envelope-open-fill me-2 text-warning"></i>Leave Requests</h4>
+  <div>
+    <h4 class="page-title"><i class="bi bi-envelope-open-fill me-2 text-warning"></i>{% if reviewer_role == 'hod' %}HOD{% else %}Faculty{% endif %} Leave Requests</h4>
+    <p class="text-muted mb-0">{{ session.dept }} department only.</p>
+  </div>
 </div>
 
 <!-- Filter Bar -->
@@ -17,7 +20,8 @@
       <div class="col-sm-4">
         <select class="form-select" name="status">
           <option value="">All Status</option>
-          <option value="pending"  {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+          <option value="pending"  {% if status_filter == 'pending' %}selected{% endif %}>Pending HOD</option>
+          <option value="hod_approved"  {% if status_filter == 'hod_approved' %}selected{% endif %}>Pending Faculty</option>
           <option value="approved" {% if status_filter == 'approved' %}selected{% endif %}>Approved</option>
           <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Rejected</option>
         </select>
@@ -64,16 +68,14 @@
             </td>
             <td>
               <span class="badge
-                {% if leave.status == 'approved' %}bg-success
-                {% elif leave.status == 'rejected' %}bg-danger
-                {% else %}bg-warning text-dark{% endif %}">
-                {{ leave.status | capitalize }}
+                {{ status_badges.get(leave.status, 'bg-secondary') }}">
+                {{ status_labels.get(leave.status, leave.status | replace('_', ' ') | title) }}
               </span>
             </td>
             <td>
               <a href="{{ url_for('faculty_review', leave_id=leave.id) }}"
-                 class="btn btn-sm {% if leave.status == 'pending' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
-                {% if leave.status == 'pending' %}Review{% else %}View{% endif %}
+                 class="btn btn-sm {% if (reviewer_role == 'hod' and leave.status == 'pending') or (reviewer_role == 'faculty' and leave.status == 'hod_approved') %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                {% if (reviewer_role == 'hod' and leave.status == 'pending') or (reviewer_role == 'faculty' and leave.status == 'hod_approved') %}Review{% else %}View{% endif %}
               </a>
             </td>
           </tr>

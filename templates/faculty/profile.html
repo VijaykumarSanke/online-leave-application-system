@@ -16,7 +16,7 @@
         <table class="table table-borderless">
           <tr><th width="35%">Full Name</th><td>{{ user.full_name }}</td></tr>
           <tr><th>Email</th><td>{{ user.email }}</td></tr>
-          <tr><th>Role</th><td><span class="badge bg-warning text-dark">Faculty</span></td></tr>
+          <tr><th>Role</th><td><span class="badge {% if user.role == 'hod' %}bg-info text-dark{% else %}bg-warning text-dark{% endif %}">{% if user.role == 'hod' %}HOD{% else %}Faculty{% endif %}</span></td></tr>
           <tr><th>Department</th><td>{{ user.department or '—' }}</td></tr>
           <tr>
             <th>Status</th>

@@ -1,0 +1,70 @@
+# Product Requirements Document (PRD)
+## Project: Online Leave Application System
+
+### 1. Introduction
+The **Online Leave Application System** is a web-based platform designed to digitize and streamline the leave management process for educational institutions. It replaces the traditional paper-based workflow with an automated, role-based system that ensures transparency, efficiency, and accurate record-keeping.
+
+### 2. Objectives
+- **Digitization**: Eliminate paper-based leave forms.
+- **Role-Based Access**: Provide specific functionalities for Students, Faculty, and Administrators.
+- **Transparency**: Allow students to track their application status in real-time.
+- **Efficiency**: Enable faculty to review and process applications quickly.
+- **Data Integrity**: Maintain a central database of all users and leave records.
+
+### 3. User Roles & Functionalities
+
+#### 3.1 Student
+- **Authentication**: Secure login using institutional email and password.
+- **Apply for Leave**: Submit applications with details like title, leave type (Sick, Personal, Emergency, etc.), date range, and reason.
+- **Track Status**: View a dashboard showing "Pending", "Approved", and "Rejected" counts.
+- **Manage Applications**: Edit or delete applications as long as they are still in "Pending" status.
+- **View Feedback**: See remarks provided by faculty members upon approval or rejection.
+
+#### 3.2 Faculty
+- **Departmental Oversight**: View leave requests specifically from students within their own department.
+- **Review Workflow**: Review pending applications and either "Approve" or "Reject" them with optional remarks.
+- **Dashboard Stats**: View department-specific leave statistics.
+- **Search & Filter**: Search for students by name or filter applications by status.
+
+#### 3.3 Administrator
+- **User Management (CRUD)**: Add, edit, delete, and activate/deactivate users (Students, Faculty, and other Admins).
+- **System-Wide View**: Access all leave records across all departments.
+- **Reporting & Analytics**: Generate summary reports including:
+  - Department-wise leave distribution.
+  - Monthly application trends.
+  - Leave type breakdown.
+- **System Maintenance**: Oversee all database records and user statuses.
+
+### 4. Technical Requirements
+
+#### 4.1 Frontend
+- **Framework**: HTML5, CSS3, Bootstrap 5.
+- **Interactivity**: Vanilla JavaScript for dynamic UI updates and form validations.
+- **Aesthetics**: Modern, clean, and professional design with a focus on usability.
+
+#### 4.2 Backend
+- **Framework**: Python Flask.
+- **Security**: 
+  - Password hashing using `Werkzeug` (bcrypt).
+  - Role-based route protection using custom decorators.
+  - Session-based authentication.
+- **Database Interaction**: `flask_mysqldb` for MySQL connectivity.
+
+#### 4.3 Database
+- **Engine**: MySQL.
+- **Core Tables**:
+  - `users`: Stores user credentials, roles, and department info.
+  - `leave_applications`: Stores application details, status, and faculty remarks.
+  - `departments`: Managed list of institutional departments.
+
+### 5. Security & Compliance
+- **Data Protection**: Sensitive data (passwords) must never be stored in plain text.
+- **Input Validation**: All user inputs must be sanitized to prevent SQL injection and XSS.
+- **Access Control**: Users must only be able to access routes and data corresponding to their assigned roles.
+
+### 6. Future Enhancements
+- **Notification System**: Automated email or SMS alerts for status updates.
+- **Document Upload**: Support for medical certificate uploads for sick leaves.
+- **Leave Quota Management**: Track and limit the number of leaves per student per semester.
+- **Multi-Level Approval**: Workflow escalation from Faculty to HOD or Principal.
+- **Exporting**: Export leave history and reports to PDF or Excel formats.

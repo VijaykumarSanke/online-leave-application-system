@@ -45,19 +45,18 @@
             <td>{{ leave.to_date }}</td>
             <td>
               <span class="badge
-                {% if leave.status == 'approved' %}bg-success
-                {% elif leave.status == 'rejected' %}bg-danger
-                {% else %}bg-warning text-dark{% endif %}">
+                {{ status_badges.get(leave.status, 'bg-secondary') }}">
                 {% if leave.status == 'approved' %}<i class="bi bi-check-circle me-1"></i>
                 {% elif leave.status == 'rejected' %}<i class="bi bi-x-circle me-1"></i>
                 {% else %}<i class="bi bi-hourglass me-1"></i>{% endif %}
-                {{ leave.status | capitalize }}
+                {{ status_labels.get(leave.status, leave.status | replace('_', ' ') | title) }}
               </span>
             </td>
             <td>
-              {% if leave.faculty_remarks %}
-                <span class="text-muted small" title="{{ leave.faculty_remarks }}">
-                  {{ leave.faculty_remarks[:40] }}{% if leave.faculty_remarks|length > 40 %}...{% endif %}
+              {% if leave.hod_remarks or leave.faculty_remarks %}
+                {% set remarks = leave.faculty_remarks or leave.hod_remarks %}
+                <span class="text-muted small" title="{{ remarks }}">
+                  {{ remarks[:40] }}{% if remarks|length > 40 %}...{% endif %}
                 </span>
               {% else %}
                 <span class="text-muted small">—</span>
